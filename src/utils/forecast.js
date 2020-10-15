@@ -10,17 +10,17 @@ const request = require('request')
 //    - Coordinate error, pass string for error
 //    - Success, pass forecast string for data (same format as from before)
 
-const forecast = (latitude, longitude, callback) => {
+const forecast = (latitude, longitude, callback) => { // callback(error, response)
     const url = 'http://api.weatherstack.com/current?access_key=fbe9b07377bf55e9252d10351a386afb&query=' + encodeURIComponent(latitude + ',' + longitude) + '&units=m'
     request({ url, json: true }, (error, { body } /*instead of that long response*/) => {
         if (error) {
-            callback('Unable to connect to weather service!')
+            callback('Unable to connect to weather service!', undefined)
         } else if (body.error) {
-            callback('Unable to find location!')
+            callback('Unable to find location!', undefined)
         } else {
             const {current} = body 
-            const {temperature, feelslike, weather_descriptions} = current
-            callback(undefined, weather_descriptions[0] + '. It is currently ' + temperature + ' degrees out, and it feels like ' + feelslike + ' degrees.')
+            const {temperature, feelslike, weather_descriptions, humidity} = current
+            callback(undefined, weather_descriptions[0] + '. It is currently ' + temperature + ' degrees out, and it feels like ' + feelslike + ' degrees. The humidity is ' + humidity + '%.')
         }/* json=true parses the response JSON so we don't need to */
     })
 }
